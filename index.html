@@ -1,178 +1,421 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ENA index.html 핫픽스 패처</title>
-<style>
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#faf9f5;color:#202124;margin:0;padding:32px;line-height:1.55}
-  .box{max-width:880px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-  h1{font-size:24px;margin:0 0 8px}.muted{color:#666;font-size:14px}.steps{background:#f7f7ff;border-left:4px solid #3830e0;padding:14px 16px;border-radius:10px;margin:18px 0}
-  input{display:block;margin:16px 0;padding:12px;border:1px solid #ddd;border-radius:10px;width:100%;box-sizing:border-box;background:#fff}
-  button{background:#3830e0;color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
-  pre{white-space:pre-wrap;background:#111827;color:#d1fae5;padding:14px;border-radius:12px;min-height:120px;overflow:auto;font-size:12px}
-  code{background:#f2f2f2;padding:2px 5px;border-radius:5px}.ok{color:#047857;font-weight:700}.bad{color:#b91c1c;font-weight:700}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ENA 콘텐츠 편성센터 | 시청률 분석</title>
+  <style>
+    :root{
+      --bg:#f6f6f9;--card:#fff;--line:#e8e8ef;--text:#252633;--muted:#74788a;--brand:#4b3cff;--brand-soft:#eeecff;--danger:#d92d20;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Arial,sans-serif;font-size:14px}
+    header{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:10}
+    .brand{display:flex;align-items:center;gap:12px}.logo{background:var(--brand);color:#fff;border-radius:5px;padding:6px 12px;font-weight:800;font-size:18px;line-height:1}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}.pill{background:var(--brand-soft);color:var(--brand);padding:7px 12px;border-radius:8px;font-weight:700;font-size:12px}
+    main{max-width:1180px;margin:0 auto;padding:28px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.02)}
+    h1{font-size:28px;margin:6px 0 4px}h2{font-size:18px;margin:0 0 12px}h3{font-size:16px;margin:24px 0 10px}.meta{color:var(--muted);font-size:13px;margin-bottom:18px}.help{color:var(--muted);font-size:12px;line-height:1.55;margin:8px 0 0}
+    textarea{width:100%;min-height:180px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.45;background:#fbfbfd}textarea:focus{outline:2px solid rgba(75,60,255,.18);border-color:var(--brand)}
+    button{border:0;border-radius:10px;padding:11px 16px;font-weight:800;cursor:pointer;background:var(--brand);color:#fff}button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}button.danger{background:#fff;color:var(--danger);border:1px solid #ffd1cc}.actions{display:flex;gap:10px;align-items:center;margin:18px 0 4px;flex-wrap:wrap}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}th,td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px;text-align:left}th{background:#f7f7fb;color:var(--muted);font-size:12px;font-weight:800}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}.rank{width:44px;color:var(--muted);text-align:center}.selected{background:var(--brand-soft)}.selected td:first-child{border-left:4px solid var(--brand)}.empty{padding:26px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #d6d7e1;border-radius:12px}.warn{padding:12px 14px;border-radius:12px;background:#fff6ed;border:1px solid #fed7aa;color:#9a3412;margin:12px 0;line-height:1.5}.ok{padding:12px 14px;border-radius:12px;background:#eefcf3;border:1px solid #bbf7d0;color:#166534;margin:12px 0;line-height:1.5}.section{margin-top:28px}.chartWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}.chartTitle{font-weight:900;margin-bottom:4px}.chartMeta{font-size:12px;color:var(--muted);margin-bottom:10px}canvas{width:100%;height:300px;border-radius:12px;background:#fff}.small{font-size:12px;color:var(--muted)}
+    @media(max-width:860px){.grid{grid-template-columns:1fr}main{padding:18px}header{padding:0 16px}}
+  </style>
 </head>
 <body>
-<div class="box">
-  <h1>ENA index.html 핫픽스 패처</h1>
-  <p class="muted">현재 GitHub에 올린 <code>index.html</code>을 선택하면 수정된 <code>index.fixed.html</code>을 내려받습니다.</p>
-  <div class="steps">
-    적용 내용<br>
-    1. 새로고침/재접속 시 이전 작업 데이터가 남지 않도록 localStorage 저장/복원을 끕니다.<br>
-    2. 본방송 종합 시청률 순위는 ENA 일일 시청률 데이터 날짜를 최우선 기준으로 사용합니다.<br>
-    3. 분당 그래프는 ENA 일일 시청률 데이터 안의 <code>&lt;본&gt;</code> 프로그램에만 허용합니다. 일일 데이터에 없는 <code>나는 SOLO</code> 그래프는 생성되지 않습니다.
-  </div>
-  <input id="file" type="file" accept=".html,text/html" />
-  <button id="run" disabled>수정 HTML 만들기</button>
-  <h3>작업 로그</h3>
-  <pre id="log">index.html 파일을 선택하세요.</pre>
-</div>
-<script>
-const $file = document.getElementById('file');
-const $run = document.getElementById('run');
-const $log = document.getElementById('log');
-let pickedFile = null;
-const DRAFT_KEY = 'ena-ratings-card-draft-v2';
+  <header>
+    <div class="brand"><div class="logo">ENA</div><div><strong>콘텐츠 편성센터</strong><small>시청률 분석</small></div></div>
+    <div class="pill">새로고침 시 초기화</div>
+  </header>
 
-function log(msg){ $log.textContent += '\n' + msg; }
-function setLog(msg){ $log.textContent = msg; }
-function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-function b64ToBytes(b64){ const bin = atob(b64); const out = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i); return out; }
-function bytesToB64(bytes){ let bin=''; const chunk=0x8000; for(let i=0;i<bytes.length;i+=chunk){ bin += String.fromCharCode(...bytes.subarray(i,i+chunk)); } return btoa(bin); }
-async function gunzip(bytes){
-  if(typeof DecompressionStream === 'undefined') throw new Error('이 브라우저는 DecompressionStream을 지원하지 않습니다. Chrome/Edge 최신 버전에서 실행하세요.');
-  const ds = new DecompressionStream('gzip');
-  const writer = ds.writable.getWriter(); writer.write(bytes); writer.close();
-  const res = await new Response(ds.readable).arrayBuffer(); return new Uint8Array(res);
-}
-async function gzip(bytes){
-  if(typeof CompressionStream === 'undefined') throw new Error('이 브라우저는 CompressionStream을 지원하지 않습니다. Chrome/Edge 최신 버전에서 실행하세요.');
-  const cs = new CompressionStream('gzip');
-  const writer = cs.writable.getWriter(); writer.write(bytes); writer.close();
-  const res = await new Response(cs.readable).arrayBuffer(); return new Uint8Array(res);
-}
-function downloadText(name, text){
-  const blob = new Blob([text], {type:'text/html;charset=utf-8'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
-}
-function findMethodBlock(src, methodName){
-  const re = new RegExp('\\n\\s*' + methodName + '\\s*\\([^)]*\\)\\s*\\{', 'm');
-  const m = re.exec(src); if(!m) return null;
-  let i = m.index + m[0].lastIndexOf('{'); let depth = 0;
-  for(let j=i;j<src.length;j++){
-    const ch = src[j];
-    if(ch === '{') depth++;
-    else if(ch === '}') { depth--; if(depth === 0) return {start:m.index, bodyStart:i, end:j+1, text:src.slice(m.index,j+1)}; }
+  <main>
+    <h1>ENA 시청률 분석</h1>
+    <div class="meta">ENA 일일 시청률 날짜를 최우선 기준으로 본방송 종합 순위와 분당 그래프를 생성합니다.</div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>1. ENA 일일 시청률 데이터</h2>
+        <textarea id="enaDailyInput" placeholder="예:&#10;2026년 6월 16일 화&#10;시간&#9;프로그램&#9;수도권 2049&#9;전국 가구&#9;수도권 가구&#10;21:59-23:10&#9;닥터심보이 <본>&#9;1.163&#9;5.076&#9;4.540"></textarea>
+        <p class="help">이 데이터가 있으면 여기서 추출한 날짜가 본방송 종합 순위의 1순위 기준 날짜가 됩니다. 분당 그래프 대상도 여기 있는 <strong>&lt;본&gt;</strong> 프로그램만 사용합니다.</p>
+      </section>
+
+      <section class="card">
+        <h2>2. 본방송 종합 시청률 데이터</h2>
+        <textarea id="mainInput" placeholder="예:&#10;2026-06-17&#10;종분류&#9;채널&#9;프로그램&#9;수도권 2049&#9;전국 가구&#10;오락기타&#9;ENA&#9;나혼자SOLO<본>&#9;1.655&#9;2.514"></textarea>
+        <p class="help">주간 데이터여도 ENA 일일 시청률 날짜와 같은 날짜 또는 해당 날짜가 포함된 기간 행만 우선 사용합니다. ENA 일일 데이터가 없으면 최신 날짜를 사용합니다.</p>
+      </section>
+
+      <section class="card" style="grid-column:1/-1">
+        <h2>3. 분당 그래프 데이터</h2>
+        <textarea id="minuteInput" placeholder="예:&#10;2026-06-16&#9;21:59&#9;닥터심보이&#9;1.12&#10;2026-06-16&#9;22:00&#9;닥터심보이&#9;1.24&#10;2026-06-16&#9;22:01&#9;나는 SOLO&#9;2.10"></textarea>
+        <p class="help">ENA 일일 시청률 데이터에 있고 프로그램명에 <strong>&lt;본&gt;</strong>이 붙은 프로그램만 그래프를 그립니다. 따라서 ENA 일일 데이터에 없는 <strong>나는 SOLO</strong>는 자동 제외됩니다.</p>
+      </section>
+    </div>
+
+    <div class="actions">
+      <button id="runBtn">분석하기</button>
+      <button id="resetBtn" class="secondary">화면 초기화</button>
+      <button id="hardResetBtn" class="danger">저장 데이터 삭제</button>
+      <span class="small">이 페이지는 데이터를 자동 저장하지 않습니다.</span>
+    </div>
+
+    <div id="message"></div>
+
+    <section class="section">
+      <h3>본방송 종합 시청률 순위</h3>
+      <div id="rankingMeta" class="meta"></div>
+      <div id="rankingResult" class="empty">아직 생성된 데이터가 없습니다.</div>
+    </section>
+
+    <section class="section">
+      <h3>ENA 일일 시청률</h3>
+      <div id="dailyMeta" class="meta"></div>
+      <div id="dailyResult" class="empty">아직 생성된 데이터가 없습니다.</div>
+    </section>
+
+    <section class="section">
+      <h3>분당 그래프</h3>
+      <div id="graphMeta" class="meta"></div>
+      <div id="graphResult" class="empty">아직 생성된 그래프가 없습니다.</div>
+    </section>
+  </main>
+
+<script>
+(function(){
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const storageKeys = [
+    'enaDailyInput','mainInput','minuteInput','enaDailyRatings','mainBroadcastRatings','minuteRatings',
+    'ENA_DAILY_INPUT','MAIN_BROADCAST_INPUT','MINUTE_INPUT','ratingsData','lastResult','savedState'
+  ];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    clearStoredData();
+    clearScreen();
+    $('runBtn').addEventListener('click', runAnalysis);
+    $('resetBtn').addEventListener('click', clearScreen);
+    $('hardResetBtn').addEventListener('click', () => { clearStoredData(); clearScreen(); showMessage('저장 데이터와 화면을 모두 비웠습니다.', 'ok'); });
+  });
+
+  function clearStoredData(){
+    try { storageKeys.forEach(k => localStorage.removeItem(k)); } catch(e) {}
+    try { storageKeys.forEach(k => sessionStorage.removeItem(k)); } catch(e) {}
+    // 이전 index.html에서 어떤 key로 저장했는지 알 수 없을 때를 대비합니다.
+    // 이 HTML은 GitHub Pages 전용 분석 도구라는 전제로, 새로고침 시 남는 데이터를 전부 제거합니다.
+    try { localStorage.clear(); } catch(e) {}
+    try { sessionStorage.clear(); } catch(e) {}
   }
-  return null;
-}
-function replaceMethod(src, methodName, replacement){
-  const b = findMethodBlock(src, methodName); if(!b) throw new Error(methodName + ' 메서드를 찾지 못했습니다.');
-  return src.slice(0,b.start) + '\n  ' + replacement + src.slice(b.end);
-}
-function insertAfterMethod(src, methodName, insertText){
-  const b = findMethodBlock(src, methodName); if(!b) throw new Error(methodName + ' 메서드 뒤 삽입 위치를 찾지 못했습니다.');
-  if(src.includes('findEnaDailyDate(datasets)')) return src;
-  return src.slice(0,b.end) + '\n\n' + insertText + src.slice(b.end);
-}
-function patchGenerateOne(src){
-  const b = findMethodBlock(src, 'generateOne'); if(!b) throw new Error('generateOne 메서드를 찾지 못했습니다.');
-  let t = b.text;
-  if(!t.includes('const dailyDateForRanking = this.findEnaDailyDate(datasets);')){
-    t = t.replace(
-      'const externalMinutes = this.findMinutePool(datasets);',
-      'const externalMinutes = this.findMinutePool(datasets);\n      const dailyDateForRanking = this.findEnaDailyDate(datasets);\n      const prevForBuild = dailyDateForRanking ? { ...prev, publishDate: dailyDateForRanking, publishDateManual: false } : prev;\n      this._dailyFirstRunProgramSet = this.getDailyFirstRunProgramSet(datasets);'
-    );
-    t = t.replace('const res = this.buildCards(dataset, prev, externalMinutes);','const res = this.buildCards(dataset, prevForBuild, externalMinutes);');
+
+  function clearScreen(){
+    ['enaDailyInput','mainInput','minuteInput'].forEach(id => $(id).value = '');
+    $('message').innerHTML = '';
+    $('rankingMeta').textContent = '';
+    $('dailyMeta').textContent = '';
+    $('graphMeta').textContent = '';
+    $('rankingResult').className = 'empty';
+    $('rankingResult').innerHTML = '아직 생성된 데이터가 없습니다.';
+    $('dailyResult').className = 'empty';
+    $('dailyResult').innerHTML = '아직 생성된 데이터가 없습니다.';
+    $('graphResult').className = 'empty';
+    $('graphResult').innerHTML = '아직 생성된 그래프가 없습니다.';
   }
-  return src.slice(0,b.start)+t+src.slice(b.end);
-}
-function patchGenerateAll(src){
-  const b = findMethodBlock(src, 'generateAll'); if(!b) throw new Error('generateAll 메서드를 찾지 못했습니다.');
-  let t = b.text;
-  if(!t.includes('const dailyDateForRanking = this.findEnaDailyDate(datasets);')){
-    t = t.replace(
-      'const externalMinutes = this.findMinutePool(datasets);',
-      'const externalMinutes = this.findMinutePool(datasets);\n      const dailyDateForRanking = this.findEnaDailyDate(datasets);\n      const prevForBuild = dailyDateForRanking ? { ...prev, publishDate: dailyDateForRanking, publishDateManual: false } : prev;\n      this._dailyFirstRunProgramSet = this.getDailyFirstRunProgramSet(datasets);'
-    );
-    t = t.replaceAll('const res = this.buildCards(dataset, prev, externalMinutes);','const res = this.buildCards(dataset, prevForBuild, externalMinutes);');
-    t = t.replace('if (publishDate) patch.publishDate = publishDate;', 'if (dailyDateForRanking) patch.publishDate = dailyDateForRanking;\n      else if (publishDate) patch.publishDate = publishDate;');
+
+  function showMessage(text, type='warn'){
+    $('message').innerHTML = `<div class="${type}">${escapeHtml(text)}</div>`;
   }
-  return src.slice(0,b.start)+t+src.slice(b.end);
-}
-function patchBuildCards(src){
-  let out = src;
-  // 공동제작/나는SOLO 등은 ENA 일일 <본> 목록에 있는 경우에만 분당 그래프 생성
-  out = out.replace(
-    'if (minutes) {\n        const lo = this.startMinutes(copro.start);',
-    'const allowedDailyFirstRun = this.isAllowedDailyFirstRunProgram(copro.program);\n      if (minutes && allowedDailyFirstRun) {\n        const lo = this.startMinutes(copro.start);'
-  );
-  // ENA 일일 branch도 <본> 정확 조건 + 허용목록 기준으로 제한
-  out = out.replace(
-    'const bon = daily.rows.filter((r) => r.firstRun && !isCoPro(r.program));',
-    'const bon = daily.rows.filter((r) => r.firstRun && !isCoPro(r.program) && this.isAllowedDailyFirstRunProgram(r.program));'
-  );
-  return out;
-}
-function patchJs(src){
-  let out = src;
-  out = replaceMethod(out, 'saveDraft', 'saveDraft() {\n    // 새로고침/재접속 시 이전 작업이 남지 않도록 저장하지 않습니다.\n    try { localStorage.removeItem("' + DRAFT_KEY + '"); } catch (e) {}\n  }');
-  out = replaceMethod(out, 'readDraft', 'readDraft() {\n    // 항상 빈 상태로 시작합니다.\n    try { localStorage.removeItem("' + DRAFT_KEY + '"); } catch (e) {}\n    return null;\n  }');
-  const helpers = `  findEnaDailyDate(datasets) {\n    for (const d of datasets || []) {\n      const daily = this.parseEnaRatings(d.raw);\n      const dates = (daily.rows || []).map((r) => r.date).filter(Boolean);\n      if (dates.length) return this.mostCommon(dates);\n    }\n    return "";\n  }\n\n  getDailyFirstRunProgramSet(datasets) {\n    const set = new Set();\n    for (const d of datasets || []) {\n      const daily = this.parseEnaRatings(d.raw);\n      (daily.rows || []).forEach((r) => {\n        if (r.firstRun) set.add(this.rnkNormProg(this.cleanProgramName(r.program)));\n      });\n    }\n    return set;\n  }\n\n  isAllowedDailyFirstRunProgram(program) {\n    const set = this._dailyFirstRunProgramSet;\n    if (!set || !set.size) return false;\n    return set.has(this.rnkNormProg(this.cleanProgramName(program)));\n  }`;
-  out = insertAfterMethod(out, 'findMinutePool', helpers);
-  out = patchGenerateOne(out);
-  out = patchGenerateAll(out);
-  out = patchBuildCards(out);
-  return out;
-}
-async function patchHtml(html){
-  // 이전 localStorage를 페이지 로딩 초기에 한 번 더 제거하는 안전장치
-  if(!html.includes('ENA_HOTFIX_CLEAR_DRAFT')){
-    html = html.replace(/<head[^>]*>/i, (m)=>m + '\n<script id="ENA_HOTFIX_CLEAR_DRAFT">try{localStorage.removeItem("' + DRAFT_KEY + '");}catch(e){}<\/script>');
-  }
-  const manifestRe = /<script type="__bundler\/manifest">([\s\S]*?)<\/script>/;
-  const mm = manifestRe.exec(html);
-  if(!mm) throw new Error('__bundler/manifest를 찾지 못했습니다. 원본 index.html인지 확인하세요.');
-  const manifest = JSON.parse(mm[1]);
-  let patchedCount = 0;
-  for(const [uuid, entry] of Object.entries(manifest)){
-    if(!entry || !String(entry.mime || '').includes('javascript')) continue;
-    let bytes = b64ToBytes(entry.data);
-    if(entry.compressed) bytes = await gunzip(bytes);
-    let js = new TextDecoder().decode(bytes);
-    if(!js.includes('ena-ratings-card-draft-v2') && !js.includes('generateAll()')) continue;
-    const before = js;
-    js = patchJs(js);
-    if(js !== before){
-      let outBytes = new TextEncoder().encode(js);
-      if(entry.compressed) outBytes = await gzip(outBytes);
-      entry.data = bytesToB64(outBytes);
-      patchedCount++;
+
+  function runAnalysis(){
+    const enaText = $('enaDailyInput').value.trim();
+    const mainText = $('mainInput').value.trim();
+    const minuteText = $('minuteInput').value.trim();
+
+    const ena = parseEnaDaily(enaText);
+    const main = parseMainBroadcast(mainText);
+    const minute = parseMinuteRows(minuteText);
+
+    const hasEnaDailyData = ena.rows.length > 0 && !!ena.date;
+    const targetDate = hasEnaDailyData ? ena.date : getLatestDate(main.rows);
+
+    renderDaily(ena);
+
+    if (!targetDate) {
+      showMessage('날짜를 찾지 못했습니다. ENA 일일 시청률 데이터 또는 본방송 종합 데이터에 날짜를 포함해 주세요.');
+      return;
     }
+
+    const rankingRows = buildMainRanking(main.rows, targetDate, hasEnaDailyData);
+    renderRanking(rankingRows, targetDate, hasEnaDailyData);
+
+    const graphTargets = hasEnaDailyData
+      ? ena.rows.filter(r => hasMainTag(r.program)).map(r => normalizeProgramName(r.program)).filter(Boolean)
+      : [];
+
+    renderGraphs(minute.rows, graphTargets, targetDate, hasEnaDailyData);
+
+    showMessage(
+      hasEnaDailyData
+        ? `ENA 일일 시청률 날짜 ${formatDateKr(targetDate)}를 기준으로 본방송 순위와 분당 그래프를 생성했습니다.`
+        : `ENA 일일 시청률 데이터가 없어 본방송 데이터의 최신 날짜 ${formatDateKr(targetDate)}를 기준으로 순위를 생성했습니다.`,
+      'ok'
+    );
   }
-  if(!patchedCount) throw new Error('수정 대상 JavaScript를 찾지 못했습니다. 파일 구조가 달라졌을 수 있습니다.');
-  const newManifest = JSON.stringify(manifest);
-  return html.slice(0, mm.index) + '<script type="__bundler/manifest">\n' + newManifest + '\n</script>' + html.slice(mm.index + mm[0].length);
-}
-$file.addEventListener('change', ()=>{ pickedFile = $file.files[0] || null; $run.disabled = !pickedFile; setLog(pickedFile ? pickedFile.name + ' 선택됨. 수정 HTML 만들기를 누르세요.' : 'index.html 파일을 선택하세요.'); });
-$run.addEventListener('click', async()=>{
-  if(!pickedFile) return;
-  $run.disabled = true;
-  try{
-    setLog('파일 읽는 중...');
-    const html = await pickedFile.text();
-    log('번들 JavaScript 압축 해제 및 패치 중...');
-    const fixed = await patchHtml(html);
-    log('완료. index.fixed.html 다운로드를 시작합니다.');
-    downloadText('index.fixed.html', fixed);
-    log('완료 후 GitHub에는 index.fixed.html 파일명을 index.html로 바꿔 올리면 됩니다.');
-  } catch(err){
-    log('오류: ' + (err && err.message ? err.message : err));
-  } finally { $run.disabled = false; }
-});
+
+  function parseEnaDaily(text){
+    const date = extractDate(text);
+    const lines = cleanLines(text);
+    const rows = [];
+    for (const line of lines) {
+      const cells = splitCells(line);
+      if (cells.length < 2 || isHeaderLine(cells)) continue;
+      const timeIdx = cells.findIndex(c => /\d{1,2}:\d{2}\s*[-~]\s*\d{1,2}:\d{2}/.test(c));
+      const programIdx = timeIdx >= 0 ? timeIdx + 1 : findProgramIndex(cells);
+      if (programIdx < 0 || !cells[programIdx]) continue;
+      const nums = cells.map(toNumber).filter(n => n !== null);
+      if (!nums.length && !hasMainTag(cells[programIdx])) continue;
+      rows.push({
+        date,
+        time: timeIdx >= 0 ? cells[timeIdx] : '',
+        program: cells[programIdx],
+        rating2049: nums[0] ?? null,
+        nationwide: nums[1] ?? null,
+        metro: nums[2] ?? null,
+        raw: cells
+      });
+    }
+    return { date, rows };
+  }
+
+  function parseMainBroadcast(text){
+    const defaultDate = extractDate(text);
+    const lines = cleanLines(text);
+    const rows = [];
+    for (const line of lines) {
+      const cells = splitCells(line);
+      if (cells.length < 3 || isHeaderLine(cells)) continue;
+      const dates = extractDatesFromString(line);
+      const channelIdx = findChannelIndex(cells);
+      const programIdx = findMainProgramIndex(cells, channelIdx);
+      if (programIdx < 0) continue;
+      const numbers = cells.map(toNumber).filter(n => n !== null);
+      if (!numbers.length) continue;
+      rows.push({
+        date: dates[0] || defaultDate,
+        dates,
+        genre: cells[0] || '',
+        channel: channelIdx >= 0 ? cells[channelIdx] : '',
+        program: cells[programIdx],
+        rating2049: numbers.length >= 2 ? numbers[numbers.length - 2] : numbers[0],
+        household: numbers[numbers.length - 1],
+        raw: cells
+      });
+    }
+    return { rows };
+  }
+
+  function parseMinuteRows(text){
+    const defaultDate = extractDate(text);
+    const lines = cleanLines(text);
+    const rows = [];
+    for (const line of lines) {
+      const cells = splitCells(line);
+      if (cells.length < 3 || isHeaderLine(cells)) continue;
+      const dates = extractDatesFromString(line);
+      const timeIdx = cells.findIndex(c => /^\d{1,2}:\d{2}(:\d{2})?$/.test(c) || /\d{1,2}:\d{2}\s*[-~]\s*\d{1,2}:\d{2}/.test(c));
+      const nums = cells.map(toNumber).filter(n => n !== null);
+      if (!nums.length) continue;
+      const programIdx = findProgramIndex(cells, timeIdx);
+      if (programIdx < 0) continue;
+      rows.push({
+        date: dates[0] || defaultDate,
+        time: timeIdx >= 0 ? cells[timeIdx] : String(rows.length + 1),
+        program: cells[programIdx],
+        value: nums[0],
+        raw: cells
+      });
+    }
+    return { rows };
+  }
+
+  function buildMainRanking(rows, targetDate, hasEnaDailyData){
+    let filtered = rows.filter(r => rowMatchesTargetDate(r, targetDate));
+    if (!filtered.length && !hasEnaDailyData) {
+      const latest = getLatestDate(rows);
+      filtered = rows.filter(r => rowMatchesTargetDate(r, latest));
+    }
+    return filtered.sort((a,b) => (b.rating2049 ?? 0) - (a.rating2049 ?? 0));
+  }
+
+  function renderDaily(ena){
+    if (!ena.rows.length) {
+      $('dailyMeta').textContent = '';
+      $('dailyResult').className = 'empty';
+      $('dailyResult').innerHTML = 'ENA 일일 시청률 데이터가 없습니다.';
+      return;
+    }
+    $('dailyMeta').textContent = ena.date ? `${formatDateKr(ena.date)} · ${ena.rows.length}개 행` : `${ena.rows.length}개 행`;
+    const rows = ena.rows.map(r => `
+      <tr class="${hasMainTag(r.program) ? 'selected' : ''}">
+        <td>${escapeHtml(r.time)}</td><td><strong>${escapeHtml(r.program)}</strong></td>
+        <td class="num">${fmt(r.rating2049)}</td><td class="num">${fmt(r.nationwide)}</td><td class="num">${fmt(r.metro)}</td>
+      </tr>`).join('');
+    $('dailyResult').className = '';
+    $('dailyResult').innerHTML = `<table><thead><tr><th>시간</th><th>프로그램</th><th class="num">수도권 2049</th><th class="num">전국 가구</th><th class="num">수도권 가구</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function renderRanking(rows, targetDate, hasEnaDailyData){
+    $('rankingMeta').textContent = `${formatDateKr(targetDate)} 기준 · ${hasEnaDailyData ? 'ENA 일일 시청률 날짜 우선 적용' : 'ENA 일일 데이터 없음, 최신 본방송 날짜 적용'}`;
+    if (!rows.length) {
+      $('rankingResult').className = 'empty';
+      $('rankingResult').innerHTML = `기준 날짜 ${formatDateKr(targetDate)}에 해당하는 본방송 종합 데이터가 없습니다.`;
+      return;
+    }
+    const body = rows.map((r,i) => `
+      <tr class="${i===0 ? 'selected' : ''}">
+        <td class="rank">${i+1}</td><td>${escapeHtml(r.genre)}</td><td><strong>${escapeHtml(r.channel)}</strong></td><td>${escapeHtml(r.program)}</td>
+        <td class="num"><strong>${fmt(r.rating2049)}</strong></td><td class="num">${fmt(r.household)}</td>
+      </tr>`).join('');
+    $('rankingResult').className = '';
+    $('rankingResult').innerHTML = `<table><thead><tr><th class="rank">순위</th><th>종분류</th><th>채널</th><th>프로그램</th><th class="num">수도권 2049</th><th class="num">전국 가구</th></tr></thead><tbody>${body}</tbody></table>`;
+  }
+
+  function renderGraphs(minuteRows, targets, targetDate, hasEnaDailyData){
+    if (!hasEnaDailyData) {
+      $('graphMeta').textContent = 'ENA 일일 시청률 데이터가 없어 분당 그래프를 생성하지 않습니다.';
+      $('graphResult').className = 'empty';
+      $('graphResult').innerHTML = '분당 그래프는 ENA 일일 시청률 데이터의 <본> 프로그램이 있을 때만 생성됩니다.';
+      return;
+    }
+    const uniqueTargets = [...new Set(targets)];
+    if (!uniqueTargets.length) {
+      $('graphMeta').textContent = 'ENA 일일 시청률 데이터에서 <본> 프로그램을 찾지 못했습니다.';
+      $('graphResult').className = 'empty';
+      $('graphResult').innerHTML = '<본>이 붙은 프로그램만 분당 그래프 대상으로 사용합니다.';
+      return;
+    }
+
+    const allowed = new Set(uniqueTargets);
+    const filtered = minuteRows.filter(r => {
+      const name = normalizeProgramName(r.program);
+      return allowed.has(name) && (!r.date || r.date === targetDate);
+    });
+
+    if (!filtered.length) {
+      $('graphMeta').textContent = `대상 프로그램: ${uniqueTargets.join(', ')}`;
+      $('graphResult').className = 'empty';
+      $('graphResult').innerHTML = 'ENA 일일 시청률의 <본> 프로그램과 일치하는 분당 데이터가 없습니다. 나는 SOLO처럼 대상 목록에 없는 프로그램은 제외됩니다.';
+      return;
+    }
+
+    const byProgram = groupBy(filtered, r => normalizeProgramName(r.program));
+    $('graphMeta').textContent = `대상 프로그램: ${Object.keys(byProgram).join(', ')}`;
+    $('graphResult').className = '';
+    $('graphResult').innerHTML = Object.keys(byProgram).map((program, idx) => `
+      <div class="chartWrap">
+        <div class="chartTitle">${escapeHtml(program)} 분당 그래프</div>
+        <div class="chartMeta">${formatDateKr(targetDate)} · ${byProgram[program].length}개 포인트</div>
+        <canvas id="chart${idx}" width="1000" height="300"></canvas>
+      </div>`).join('');
+    setTimeout(() => Object.keys(byProgram).forEach((program, idx) => drawLineChart($('chart'+idx), byProgram[program])), 0);
+  }
+
+  function drawLineChart(canvas, rows){
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    const pad = 42;
+    const values = rows.map(r => Number(r.value)).filter(n => Number.isFinite(n));
+    const max = Math.max(...values, 1);
+    const min = Math.min(...values, 0);
+    ctx.lineWidth = 1; ctx.strokeStyle = '#d9d9e6'; ctx.fillStyle = '#777b8c'; ctx.font = '12px sans-serif';
+    for(let i=0;i<=4;i++){
+      const y = pad + (h-pad*2)*i/4;
+      ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();
+      const label = (max - (max-min)*i/4).toFixed(2);
+      ctx.fillText(label, 6, y+4);
+    }
+    ctx.strokeStyle = '#4b3cff'; ctx.lineWidth = 3; ctx.beginPath();
+    rows.forEach((r,i) => {
+      const x = pad + (w-pad*2) * (rows.length === 1 ? .5 : i/(rows.length-1));
+      const y = h-pad - ((r.value-min)/(max-min || 1))*(h-pad*2);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    ctx.fillStyle = '#4b3cff';
+    rows.forEach((r,i) => {
+      const x = pad + (w-pad*2) * (rows.length === 1 ? .5 : i/(rows.length-1));
+      const y = h-pad - ((r.value-min)/(max-min || 1))*(h-pad*2);
+      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    });
+    ctx.fillStyle = '#777b8c';
+    const first = rows[0]?.time || ''; const last = rows[rows.length-1]?.time || '';
+    ctx.fillText(first, pad, h-12); ctx.fillText(last, w-pad-60, h-12);
+  }
+
+  function cleanLines(text){ return String(text || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean); }
+  function splitCells(line){ return String(line).split(/\t|,| {2,}/).map(s => s.trim()).filter(Boolean); }
+  function toNumber(v){
+    const s = String(v ?? '').replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);
+    if (!s) return null;
+    const n = Number(s[0]);
+    return Number.isFinite(n) ? n : null;
+  }
+  function isHeaderLine(cells){ return cells.some(c => /프로그램|채널|수도권|전국|가구|종분류|시간|순위/.test(c)) && !cells.some(c => /<본>/.test(c)); }
+  function hasMainTag(name){ return /<\s*본\s*>/.test(String(name || '')); }
+  function normalizeProgramName(name){ return String(name || '').replace(/<\s*본\s*>/g,'').replace(/[\s·ㆍ\-_]/g,'').trim(); }
+  function findChannelIndex(cells){ return cells.findIndex(c => /^(ENA|tvN|MBC|SBS|KBS|JTBC|MBN|채널A|TV CHOSUN|E채널|KBS JOY|SBS Plus)$/i.test(c)); }
+  function findProgramIndex(cells, timeIdx=-1){
+    let best = -1;
+    cells.forEach((c,i) => {
+      if (i === timeIdx) return;
+      if (/[가-힣A-Za-z]/.test(c) && !/^(시간|프로그램|채널|종분류|수도권|전국|가구|ENA|tvN|MBC|SBS|KBS|JTBC|MBN|채널A|TV CHOSUN)$/i.test(c) && toNumber(c) === null) best = best < 0 ? i : best;
+    });
+    return best;
+  }
+  function findMainProgramIndex(cells, channelIdx){
+    if (channelIdx >= 0 && cells[channelIdx + 1]) return channelIdx + 1;
+    return findProgramIndex(cells);
+  }
+  function extractDate(text){ return extractDatesFromString(text)[0] || ''; }
+  function extractDatesFromString(text){
+    const out = [];
+    const s = String(text || '');
+    let m;
+    const re1 = /(20\d{2})[.\-/년\s]+(\d{1,2})[.\-/월\s]+(\d{1,2})/g;
+    while ((m = re1.exec(s))) out.push(toISO(m[1], m[2], m[3]));
+    const re2 = /(\d{1,2})[.\-/월\s]+(\d{1,2})[일]?/g;
+    const year = (s.match(/20\d{2}/)||[])[0];
+    if (year) while ((m = re2.exec(s))) out.push(toISO(year, m[1], m[2]));
+    return [...new Set(out)].filter(Boolean);
+  }
+  function toISO(y,m,d){
+    y=Number(y); m=Number(m); d=Number(d);
+    if(!y || !m || !d || m>12 || d>31) return '';
+    return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+  function getLatestDate(rows){
+    const dates = [];
+    rows.forEach(r => (r.dates && r.dates.length ? r.dates : [r.date]).forEach(d => d && dates.push(d)));
+    return dates.sort().at(-1) || '';
+  }
+  function rowMatchesTargetDate(row, targetDate){
+    if (!targetDate) return false;
+    const dates = row.dates && row.dates.length ? row.dates : (row.date ? [row.date] : []);
+    if (!dates.length) return true;
+    if (dates.includes(targetDate)) return true;
+    if (dates.length >= 2) {
+      const sorted = dates.slice().sort();
+      return sorted[0] <= targetDate && targetDate <= sorted[sorted.length-1];
+    }
+    return false;
+  }
+  function groupBy(arr, keyFn){ return arr.reduce((acc,item) => { const k = keyFn(item); (acc[k] ||= []).push(item); return acc; }, {}); }
+  function fmt(n){ return n === null || n === undefined || Number.isNaN(n) ? '-' : Number(n).toFixed(3); }
+  function formatDateKr(iso){
+    if(!iso) return '';
+    const [y,m,d] = iso.split('-');
+    return `${Number(y)}년 ${Number(m)}월 ${Number(d)}일`;
+  }
+  function escapeHtml(s){ return String(s ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch])); }
+})();
 </script>
 </body>
 </html>
